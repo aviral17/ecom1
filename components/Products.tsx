@@ -65,6 +65,7 @@ export default function Products() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<any>([0, 10000]);
   const [priceOrder, setPriceOrder] = useState<any>("asc");
+  const [filteredProducts, setFilteredProducts] = useState<any>([]);
 
   useEffect(() => {
     // Fetch products from API endpoint
@@ -82,25 +83,28 @@ export default function Products() {
       });
   }, []);
 
-  //   useEffect(() => {
-  //     // Filter the products by the price range, the price order, and the selected categories
-  //     const filteredByPriceRange = products.filter(
-  //       (product) =>
-  //         product.price! >= priceRange[0] && product.price! <= priceRange[1]
-  //     );
-  //     const filteredByPriceOrder = filteredByPriceRange.sort((a, b) =>
-  //       priceOrder === "asc" ? a.price! - b.price! : b.price! - a.price!
-  //     );
-  //     const filteredByCategory = filteredByPriceOrder.filter((product) =>
-  //       selectedCategories.includes(product.category!)
-  //     );
-  //     // Update the filteredProducts state variable
-  //     setFilteredProducts(filteredByCategory);
-  //   }, [priceRange, priceOrder, selectedCategories]); // The dependency array of the useEffect hook
+  useEffect(() => {
+    // Filter the products by the price range, the price order, and the selected categories
+    const filteredByPriceRange = products.filter(
+      (product) =>
+        product.price! >= priceRange[0] && product.price! <= priceRange[1]
+    );
+    const filteredByPriceOrder = filteredByPriceRange.sort((a, b) =>
+      priceOrder === "asc" ? a.price! - b.price! : b.price! - a.price!
+    );
+    const filteredByCategory = filteredByPriceOrder.filter(
+      (product) =>
+        selectedCategories.length > 0 // Check if the selectedCategories array is empty or not
+          ? selectedCategories.includes(product.category!) // If it is not empty, return the products that match the selected categories
+          : true // If it is empty, return all the products
+    );
+    // Update the filteredProducts state variable
+    setFilteredProducts(filteredByCategory);
+  }, [priceRange, priceOrder, selectedCategories]);
 
-  const filteredProducts = products.filter((product) =>
-    selectedCategories.includes(product.category!)
-  );
+  //   const filteredProducts = products.filter((product) =>
+  //     selectedCategories.includes(product.category!)
+  //   );
 
   function handleCategoryChange(category: string) {
     setSelectedCategories((prev) =>
@@ -210,9 +214,16 @@ export default function Products() {
                                   >
                                     <input
                                       id={`filter-mobile-${section.id}-${i}`}
-                                      name={`${section.id}[]`}
-                                      defaultValue={option}
+                                      name={option}
+                                      //   defaultValue={option}
+                                      value={option}
                                       type="checkbox"
+                                      checked={selectedCategories.includes(
+                                        option
+                                      )}
+                                      onChange={() =>
+                                        handleCategoryChange(option)
+                                      }
                                       //   defaultChecked={option.checked}
                                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                     />
@@ -220,7 +231,7 @@ export default function Products() {
                                       htmlFor={`filter-mobile-${section.id}-${i}`}
                                       className="ml-3 min-w-0 flex-1 text-gray-500"
                                     >
-                                      {option}
+                                      {option} hjasdgfjusd
                                     </label>
                                   </div>
                                 ))}
@@ -278,7 +289,7 @@ export default function Products() {
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm"
                               )}
-                              onClick={() => setPriceOrder(option.value)}
+                              onClick={() => setPriceOrder(option.value)} // Use the setPriceOrder function as the onClick prop and pass the option.value as the argument
                             >
                               {option.name}
                             </a>
@@ -391,10 +402,10 @@ export default function Products() {
                         label="Select a budget"
                         formatOptions={{ style: "currency", currency: "USD" }}
                         step={10}
-                        maxValue={10000}
+                        maxValue={1500}
                         minValue={0}
-                        value={priceRange} // Use the priceRange state variable as the value prop
-                        onChange={setPriceRange} // Use the setPriceRange function as the onChange prop
+                        value={priceRange}
+                        onChange={setPriceRange}
                         className="max-w-md"
                       />
                       <p className="text-default-500 font-medium text-small">
