@@ -1,3 +1,5 @@
+// Make it even cool and smooth and efficient 
+
 "use client";
 
 import { useEffect } from "react";
