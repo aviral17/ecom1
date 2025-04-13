@@ -1,3 +1,5 @@
+// corrected it as per latest changes
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
